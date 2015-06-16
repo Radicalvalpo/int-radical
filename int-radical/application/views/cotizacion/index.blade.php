@@ -70,7 +70,7 @@
 
 		<p><strong>Ingresar Cotizacion</strong></p>
 
-        {{ Form::open_for_files('cotizacion') }}
+        {{ Form::open_for_files('cotizacion', array('id' => 'form_cotizacion')) }}
            <div class="form-group">
               <label for="name">Ingrese archivo en formato .xls o .xls (Microsoft Excel) a adjuntar</label>
               <br />

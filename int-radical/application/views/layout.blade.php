@@ -47,8 +47,27 @@
         {{ HTML::script('js/sb-admin-2.js') }}
         
         <script type="text/javascript">
+        
         $(function() {
             // Chart 1
+            Morris.Donut({
+              element: 'tipo_cot_chart1',
+              data: [
+                <?php
+                    // Si tipologia, no se inserta, sino si lo hace
+                    $cot_array = DB::query('select tipo_cotizaciones.nombre, COUNT(cotizaciones.id_tipo_cotizacion) AS cont from cotizaciones, tipo_cotizaciones WHERE tipo_cotizaciones.id = cotizaciones.id_tipo_cotizacion'); 
+                    if($cot_array != null){
+                        foreach ($cot_array as $user4) {
+                            ?>
+                            {label: <?php echo '"'.$user4->nombre.'"'; ?> , value: <?php echo $user4->cont; ?>},
+                            <?php
+                        }
+                    }
+                ?>
+              ]
+            });
+
+            // Chart 2
             Morris.Donut({
               element: 'tipo_cot_chart1',
               data: [
@@ -65,8 +84,6 @@
                 ?>
               ]
             });
-
-            // Chart 2
         });
         </script>
         
