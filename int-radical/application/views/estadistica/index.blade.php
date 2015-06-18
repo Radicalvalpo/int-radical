@@ -94,10 +94,29 @@
                 $comp = $cot_comp[0]->cont;
                 if($comp == 0)
                     $comp = "Sin";
+
+                // Diferencia Dias
+                $cot_1 = DB::query('SELECT DISTINCT id_cotizador, fecha FROM cotizaciones WHERE id_tipo_cotizacion=4'); 
+                $cont = 0;
+                $sum = 0;
+                
+                if($cot_1 != null){
+                    foreach ($cot_1 as $user1) {
+                        $cot_1_1 = DB::query('SELECT id, fecha, id_tipo_cotizacion as cont FROM cotizaciones WHERE `id_cotizador` = '.$user1->id_cotizador.' ORDER BY id_tipo_cotizacion ASC'); 
+                        
+                        $now = strtotime($user1->fecha);
+                        $your_date = strtotime($cot_1_1[0]->fecha);
+                        $datediff = $now - $your_date;
+                        //echo floor($datediff/(60*60*24));
+
+                        $sum += floor($datediff/(60*60*24));
+                        $cont++;
+                    }
+                }    
             ?>
             
             <p>
-                <b>XX</b> días promedio desde punto de contacto a compra
+                <b><?php echo round($sum/$cont); ?></b> días promedio desde punto de contacto a compra
             </p>
             
             <p>
