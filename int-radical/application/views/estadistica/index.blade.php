@@ -58,18 +58,87 @@
 
 @section('contenido_estadistica')
 
+    <div class="col-lg-12">
+        <?php
+            // Si tipologia, no se inserta, sino si lo hace
+            $cot_array = DB::query('SHOW FULL PROCESSLIST '); 
+            if($cot_array != null){
+                foreach ($cot_array as $user4) {
+                    //echo $user4->info."<br />";
+                }
+
+                if(count($cot_array) != 1){
+                    ?>
+                    <div class="text-center alert alert-success" role="alert" id="flash_notice_ok">
+                        <p id="text_ok">
+                            <?php 
+                                if(count($cot_array)-1 == 1)
+                                    echo "Una tarea procesando en este momento, espere porfavor para tener estadisticas finales..."; 
+                                else
+                                    echo (count($cot_array)-1)." tareas procesando en este momento, espere porfavor para tener estadisticas finales..."; 
+                            ?>
+                        </p>
+                    </div>
+                    <?php
+                }
+            }
+        ?>
+        <h5>Estadisticas Portal Inmobiliario</h5>
+
+        <div class="text-center alert alert-info" role="alert">
+            <?php
+                $cot_total = DB::query('select COUNT(id_tipo_cotizacion) AS cont from cotizaciones'); 
+                $total = $cot_total[0]->cont;
+
+                $cot_comp = DB::query('select COUNT(id_tipo_cotizacion) AS cont from cotizaciones WHERE id_tipo_cotizacion=4'); 
+                $comp = $cot_comp[0]->cont;
+                if($comp == 0)
+                    $comp = "Sin";
+            ?>
+            
+            <p>
+                <b>XX</b> días promedio desde punto de contacto a compra
+            </p>
+            
+            <p>
+                <b><?php echo $total; ?></b> cotizaciones totales
+            </p>
+
+            <p>
+                <b><?php echo $comp; ?></b> compradores finales
+            </p>
+        </div>
+    </div>
+
 	<div class="col-lg-4">
-		<!--con Auth::user() podemos acceder a los campos del usuario en la tabla usuarios-->
-		<p>Estadisticas Portal Inmobiliario</p>
-
         <div id="tipo_cot_chart1" style="height: 200px;"></div>
-        Graf 1: Según tipo cotizaciones
-
+        <p class="text-center">Graf 1: PORTAL + WEB + SDV = COMPRA</p>
 	</div>
 
-    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+        <div id="tipo_cot_chart2" style="height: 200px;"></div>
+        <p class="text-center">Graf 2: WEB + SDV = COMPRA</p>
+    </div>
 
-    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+        <div id="tipo_cot_chart3" style="height: 200px;"></div>
+        <p class="text-center">Graf 3: OTRO MEDIO + SDV + COMPRA</p>
+    </div>
+
+    <div class="col-lg-4">
+        <div id="tipo_cot_chart4" style="height: 200px;"></div>
+        <p class="text-center">Graf 4: PORTAL + WEB + SDV</p>
+    </div>
+
+    <div class="col-lg-4">
+        <div id="tipo_cot_chart5" style="height: 200px;"></div>
+        <p class="text-center">Graf 5: WEB + SDV</p>
+    </div>
+
+    <div class="col-lg-4">
+        <div id="tipo_cot_chart6" style="height: 200px;"></div>
+        <p class="text-center">Graf 6: OTRO MEDIO + SDV</p>
+    </div>
 	    
 	</div>
 </div>

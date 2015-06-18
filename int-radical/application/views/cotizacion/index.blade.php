@@ -61,16 +61,22 @@
 	<div class="col-lg-12">
 		<!--con Auth::user() podemos acceder a los campos del usuario en la tabla usuarios-->
         @if(Session::has('mensaje_error'))
-                <div class="text-center" id="flash_notice"><p class="bg-danger">{{ Session::get('mensaje_error') }}</p></div>
+            <div class="text-center alert alert-success" role="alert" style="visibility: hidden;" id="flash_notice_ok"><p id="text_ok">{{ Session::get('mensaje_error') }}</p></div>
         @endif
 
         @if(Session::has('mensaje_ok'))
-                <div class="text-center" id="flash_notice"><p class="bg-success">{{ Session::get('mensaje_ok') }}</p></div>
+            <div class="text-center alert alert-success" role="alert" style="visibility: hidden;" id="flash_notice_ok"><p id="text_ok">{{ Session::get('mensaje_ok') }}</p></div>
         @endif
+
+        <div class="text-center alert alert-danger" role="alert" style="display: none;" id="flash_notice_error"><p id="text_error"></p></div>
+        <div class="text-center alert alert-success" role="alert" style="display: none;" id="flash_notice_ok"><p id="text_ok"></p></div>
+        <div class="text-center alert alert-info" role="alert" style="display: none;" id="flash_notice_loading"><p id="text_loading"></p></div>
+
+        <div class="loading-progress"></div>
 
 		<p><strong>Ingresar Cotizacion</strong></p>
 
-        {{ Form::open_for_files('cotizacion', array('id' => 'form_cotizacion')) }}
+        <form id="data" method="post" enctype="multipart/form-data">
            <div class="form-group">
               <label for="name">Ingrese archivo en formato .xls o .xls (Microsoft Excel) a adjuntar</label>
               <br />
@@ -106,12 +112,14 @@
 
               <input value="Ingresar Registro" class="btn btn-primary btn-lg btn-block" type="submit">
            </div>
-        {{ Form::close() }}
+        </form>
 
 		</div>
 	    <!-- /.col-lg-12 -->
 	</div>
 	</div>
+
+    
 
  
 @endsection

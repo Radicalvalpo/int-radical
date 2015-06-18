@@ -26,7 +26,7 @@ class Cotizacion_Controller extends Base_Controller
 
 	}
 
-	public function post_index()
+	public function post_index()	
 	{
 		$date = new \DateTime;
 		//recogemos los campos del formulario y los guardamos en un array
@@ -64,11 +64,12 @@ class Cotizacion_Controller extends Base_Controller
 			$data = $objWorksheet->rangeToArray('A8:' . $maxCell['column'] . $maxCell['row']);
 
 			/////////////////////////////////////////////////////////////////////////////////
-
-			$cotizadores_array = DB::query('select * from cotizadores');
-			$tipo_cotizacion_array = DB::query('select * from tipo_cotizaciones'); 
-			$etapas_array = DB::query('select * from etapas'); 
-			$tipologia_array = DB::query('select * from tipologias'); 
+			$date1 = $date->format('Y-m-d H:i:s');
+			
+			$cotizadores_array = DB::query('select id,rut from cotizadores');
+			//$tipo_cotizacion_array = DB::query('select id,nombre from tipo_cotizaciones'); 
+			//$etapas_array = DB::query('select id,nombre from etapas'); 
+			//$tipologia_array = DB::query('select id,nombre from tipologias'); 
 			
 			foreach ($data as $col) {
 			    $cellA = $col[0];
@@ -80,9 +81,33 @@ class Cotizacion_Controller extends Base_Controller
 			    $cellG = $col[6];
 			    $cellH = $col[7];
 			    $cellI = $col[8];
-			    
+
+			    // Validacion null
+			    if ($cellA == NULL || $cellA == '')
+			    	$cellA = "OTRO";
+			    if ($cellB == NULL || $cellB == '')
+			    	$cellB = $date1;
+			    if ($cellC == NULL || $cellC == '')
+			    	$cellC = "0-0";
+			    if ($cellD == NULL || $cellD == '')
+			    	$cellD = "";
+			    if ($cellE == NULL || $cellE == '')
+			    	$cellE = "";
+			    if ($cellF == NULL || $cellF == '')
+			    	$cellF = "";
+			    if ($cellG == NULL || $cellG == '')
+			    	$cellG = "";
+			    if ($cellH == NULL || $cellH == '')
+			    	$cellH = 5;
+			    if ($cellI == NULL || $cellI == '')
+			    	$cellI = 0;
+
+			    // Asignacion Variables
 				$tipo_cot = $cellA;
 				$fecha_cot = $cellB;
+
+				// Convertir fechas correctamente
+				
 
 				$rut_completo = str_replace('.', '', str_replace('-', '', $cellC));
 				$rut = substr($rut_completo, 0, -1);
@@ -102,8 +127,6 @@ class Cotizacion_Controller extends Base_Controller
 				$id_etapa = 0;
 				$id_tipologia = 0;
 
-				$date1 = $date->format('Y-m-d H:i:s');
-
 				/* Si existe rut de cotizador, no se inserta, sino inserta.				
 				 *
 				 */
@@ -117,7 +140,7 @@ class Cotizacion_Controller extends Base_Controller
 		            				'("'.$rut.'", "'.$dv.'", "'.$nombre.'", "'.$apellido.'", "'.$email.'", "'.$date1.'", "'.$date1.'")');
 
 		            			if($success1){
-		            				$id_cotizador_array = DB::query('select * from cotizadores where rut="'.$rut.'"');
+		            				$id_cotizador_array = DB::query('select id from cotizadores where rut="'.$rut.'"');
 		            				$id_cotizador = $id_cotizador_array[0]->id;
 		            			}
 							} catch (Exception $e) {
@@ -137,7 +160,7 @@ class Cotizacion_Controller extends Base_Controller
         				'("'.$rut.'", "'.$dv.'", "'.$nombre.'", "'.$apellido.'", "'.$email.'", "'.$date1.'", "'.$date1.'")');
 
         			if($success1){
-        				$id_cotizador_array = DB::query('select * from cotizadores where rut="'.$rut.'"');
+        				$id_cotizador_array = DB::query('select id from cotizadores where rut="'.$rut.'"');
         				$id_cotizador = $id_cotizador_array[0]->id;
         			}
 				}
@@ -145,6 +168,17 @@ class Cotizacion_Controller extends Base_Controller
 				/** Si existe tipo de cotizacion, no se inserta, sino si lo hace
 				 *
 				 */
+				if($tipo_cot == "WEB")
+					$id_tipo_cotizacion = 1;
+				if($tipo_cot == "SDV")
+					$id_tipo_cotizacion = 2;
+				if($tipo_cot == "PI")
+					$id_tipo_cotizacion = 3;
+				if($tipo_cot == "COMPRADOR")
+					$id_tipo_cotizacion = 4;
+				if($tipo_cot == "OTRO")
+					$id_tipo_cotizacion = 5;
+				/*
 				if($tipo_cotizacion_array != null){
 		            foreach ($tipo_cotizacion_array as $user2) {
 		            	if(strcmp($user2->nombre, $tipo_cot) != 0){
@@ -179,10 +213,12 @@ class Cotizacion_Controller extends Base_Controller
 	    				$id_tipo_cotizacion = $id_tipo_cotizacion_array[0]->id;
 	    			}
 		        }
+		        */
 
 				/* Si existe etapa, no se inserta, sino si lo hace
 				 *
 				 */
+				/*
 				if($etapas_array != null){
 		            foreach ($etapas_array as $user3) {
 		            	if(strcmp($user3->nombre, $etapa) != 0){
@@ -217,10 +253,12 @@ class Cotizacion_Controller extends Base_Controller
 	    				$id_etapa = $id_etapa_array[0]->id;
 	    			}
 		        }
+		        */
 
 				/* Si tipologia, no se inserta, sino si lo hace
 				 *
 				 */
+				/*
 				if($tipologia_array != null){
 		            foreach ($tipologia_array as $user4) {
 		            	if(strcmp($user4->nombre, $tipologia) != 0){
@@ -255,6 +293,7 @@ class Cotizacion_Controller extends Base_Controller
 	    				$id_tipologia = $id_tipologia_array[0]->id;
 	    			}
 		        }
+		        */
 
 				/* Se inserta registro de cotizacion
 				 *
@@ -262,8 +301,11 @@ class Cotizacion_Controller extends Base_Controller
 				DB::table('cotizaciones')->insert(array(
 					'id_cotizador' => $id_cotizador,
 					'id_tipo_cotizacion' => $id_tipo_cotizacion,
-					'id_etapa' => $id_etapa,
-					'id_tipologia' => $id_tipologia,
+					//'id_etapa' => $id_etapa,
+					//'id_tipologia' => $id_tipologia,
+					'etapa' => $etapa,
+					'tipologia' => $tipologia,
+					'fecha' => $fecha_cot,
 					'cant_dormitorios' => $dormitorios,
 					'created_at' => $date,
 					'updated_at' => $date));			
